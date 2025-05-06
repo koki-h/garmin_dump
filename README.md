@@ -4,7 +4,7 @@ GarminConnectからデータを取得して直近の睡眠時データと前日�
 ## 使用しているライブラリ
 https://github.com/cyberjunky/python-garminconnect
 
-### macOS で「Garmin データを自動でメモ（Notes）に保存する」ワークフローの作り方
+## macOS で「Garmin データを自動でメモ（Notes）に保存する」ワークフローの作り方
 
 ---
 
