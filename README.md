@@ -1,0 +1,2 @@
+# garmin_dump
+GarminConnectからデータを取得して直近の睡眠時データと前日データの要約を表示する
