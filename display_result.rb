@@ -119,9 +119,9 @@ bp_y = bp_y.max_by { |e| e['measurementTimestampGMT'] }
 bp_y['time'] = to_jst(bp_y['measurementTimestampGMT'])
 bp_t = data['bp_raw'] || []
 bp_t = bp_t[0]['measurements']
-bp_t = bp_t.max_by { |e| e['measurementTimestampGMT'] }
+bp_t = bp_t.min_by { |e| e['measurementTimestampGMT'] }
 bp_t['time'] = to_jst(bp_t['measurementTimestampGMT'])
 
 puts "■ 血圧"
-puts "- 就寝前: #{bp_y['systolic']} - #{bp_y['diastolic']} 時刻=#{bp_y['time'].strftime('%H:%M')}"
-puts "- 起床時: #{bp_t['systolic']} - #{bp_t['diastolic']} 時刻=#{bp_t['time'].strftime('%H:%M')}"
+puts "- 就寝前: #{bp_y['systolic']}/#{bp_y['diastolic']} #{bp_y['pulse']}bpm 時刻=#{bp_y['time'].strftime('%H:%M')}"
+puts "- 起床時: #{bp_t['systolic']}/#{bp_t['diastolic']} #{bp_t['pulse']}bpm 時刻=#{bp_t['time'].strftime('%H:%M')}"
