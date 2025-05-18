@@ -59,7 +59,8 @@ bb_y = client.get_body_battery(yesterday)
 stress_y = client.get_stress_data(yesterday)
 hr_y     = client.get_heart_rates(yesterday)
 hrv_raw    = client.get_hrv_data(today)
-
+bp_t = client.get_blood_pressure(today)
+bp_y = client.get_blood_pressure(yesterday)
 # --- 配列データを辞書リストに変換 ---
 def convert_array(array, fields):
     out = []
@@ -99,7 +100,16 @@ hrv_raw_list = convert_array(
     hrv_raw.get("hrvReadings", []),
     ["readingTimeGMT", "hrvValue"]
 )
-
+# 血圧の値配列
+bp_raw_list = convert_array(
+    bp_t.get("measurementSummaries", []),
+    ["measurementTimestampLocal", "systolic", "diastolic", "pulse"]
+)
+# 血圧の値配列（昨日）
+bp_y_raw_list = convert_array(
+    bp_y.get("measurementSummaries", []),
+    ["measurementTimestampLocal", "systolic", "diastolic", "pulse"]
+)
 # タイムスタンプを統一フォーマット（UTC ISO8601）に変換するヘルパー
 def parse_ts(value):
     # ミリ秒エポックとして渡された場合
@@ -143,6 +153,8 @@ raw_data = {
     "stress_raw": stress_raw_list,         # Stress の時系列
     "hr_raw": hr_raw_list,                  # Heart Rate の時系列
     "hrv_raw": hrv_raw_list,                # HRV の時系列
+    "bp_y_raw": bp_y_raw_list,              # 昨日の血圧の時系列
+    "bp_raw": bp_raw_list,                  # 血圧の時系列
 }
 
 output = normalize(raw_data)

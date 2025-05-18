@@ -2,6 +2,7 @@
 require 'json'
 require 'time'
 require 'date'
+require 'pp'
 
 # コマンドライン引数 or デフォルトの JSON ファイル
 file = ARGV[0] || 'result.json'
@@ -108,4 +109,19 @@ if hrv.any?
   puts "- 平均: #{(hrv_vals.sum.to_f / hrv_vals.size).round(1)}"
   puts "- 最大: #{hrv_vals.max}"
   puts "- 最小: #{hrv_vals.min}"
+  puts
 end
+
+# 就寝前の血圧を表示
+bp_y = data['bp_y_raw'] || []
+bp_y = bp_y[0]['measurements']
+bp_y = bp_y.max_by { |e| e['measurementTimestampGMT'] }
+bp_y['time'] = to_jst(bp_y['measurementTimestampGMT'])
+bp_t = data['bp_raw'] || []
+bp_t = bp_t[0]['measurements']
+bp_t = bp_t.max_by { |e| e['measurementTimestampGMT'] }
+bp_t['time'] = to_jst(bp_t['measurementTimestampGMT'])
+
+puts "■ 血圧"
+puts "- 就寝前: #{bp_y['systolic']} - #{bp_y['diastolic']} 時刻=#{bp_y['time'].strftime('%H:%M')}"
+puts "- 起床時: #{bp_t['systolic']} - #{bp_t['diastolic']} 時刻=#{bp_t['time'].strftime('%H:%M')}"
