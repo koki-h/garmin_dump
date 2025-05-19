@@ -29,16 +29,31 @@ def parse_entries(raw, time_key, val_key)
   end.compact
 end
 
+
+# 時刻を基準にデータを取得
+def closest_point(data, target_time)
+  data.min_by { |h| (h[:time] - target_time).abs }
+end
+
 # 前日全体の min/max を計算
 def recalc_min_max(entries)
   return { min: nil, max: nil } if entries.empty?
   # 前日のデータのみを抽出
   entries = entries.select { |e| e[:time].to_time < @today }
+  entries = entries.reject { |h| h[:value] == 0 }
+
   min_e = entries.min_by { |e| e[:value] }
   max_e = entries.max_by { |e| e[:value] }
+  # 前日の日付を取得
+  yesterday = @today - 24 * 60 * 60
+  # 前日の15時の時刻を取得
+  time = Time.new(yesterday.year, yesterday.month, yesterday.day, 15, 0, 0, '+09:00')
+  # 15時の時刻を基準にデータを取得
+  y15_e = closest_point(entries, time)
   {
     min: { time: min_e[:time], value: min_e[:value] },
-    max: { time: max_e[:time], value: max_e[:value] }
+    max: { time: max_e[:time], value: max_e[:value] },
+    y15: { time: y15_e[:time], value: y15_e[:value] }
   }
 end
 
@@ -73,6 +88,7 @@ puts "- 就寝時: 値=#{bed_bb[:value]}  時刻=#{bed_bb[:time].strftime('%H:%M
 puts "- 起床時: 値=#{wake_bb[:value]}  時刻=#{wake_bb[:time].strftime('%H:%M')}"
 puts "- 前日最大: 値=#{bb_stats[:max][:value]}  時刻=#{bb_stats[:max][:time].strftime('%H:%M')}"
 puts "- 前日最小: 値=#{bb_stats[:min][:value]}  時刻=#{bb_stats[:min][:time].strftime('%H:%M')}"
+puts "- 前日15時: 値=#{bb_stats[:y15][:value]}  時刻=#{bb_stats[:y15][:time].strftime('%H:%M')}"
 puts
 
 # ストレス
@@ -86,6 +102,7 @@ puts "- 就寝時: 値=#{bed_st[:value]}  時刻=#{bed_st[:time].strftime('%H:%M
 puts "- 起床時: 値=#{wake_st[:value]}  時刻=#{wake_st[:time].strftime('%H:%M')}"
 puts "- 前日最大: 値=#{st_stats[:max][:value]}  時刻=#{st_stats[:max][:time].strftime('%H:%M')}"
 puts "- 前日最小: 値=#{st_stats[:min][:value]}  時刻=#{st_stats[:min][:time].strftime('%H:%M')}"
+puts "- 前日15時: 値=#{st_stats[:y15][:value]}  時刻=#{st_stats[:y15][:time].strftime('%H:%M')}"
 puts
 
 # 心拍数
@@ -99,6 +116,7 @@ puts "- 就寝時: 値=#{bed_hr[:value]}  時刻=#{bed_hr[:time].strftime('%H:%M
 puts "- 起床時: 値=#{wake_hr[:value]}  時刻=#{wake_hr[:time].strftime('%H:%M')}"
 puts "- 前日最大: 値=#{hr_stats[:max][:value]}  時刻=#{hr_stats[:max][:time].strftime('%H:%M')}"
 puts "- 前日最小: 値=#{hr_stats[:min][:value]}  時刻=#{hr_stats[:min][:time].strftime('%H:%M')}"
+puts "- 前日15時: 値=#{hr_stats[:y15][:value]}  時刻=#{hr_stats[:y15][:time].strftime('%H:%M')}"
 puts
 
 # HRV は sleep_summary の値をそのまま表示
