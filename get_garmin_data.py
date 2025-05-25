@@ -24,7 +24,8 @@ def init_client():
         client = Garmin()
         client.login(TOKENSTORE)  # トークンでのログインを試す
     except (FileNotFoundError, GarthHTTPError):
-        # パスワード認証に切り替え
+        # 環境変数を一時的に解除してパスワードログインへ
+        os.environ.pop("GARMINTOKENS", None)
         client = Garmin(email, password)
         client.login()  # ← ここは TOKENSTORE を渡さない！！
         client.garth.dump(TOKENSTORE)
