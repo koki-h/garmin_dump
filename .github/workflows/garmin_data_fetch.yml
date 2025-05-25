@@ -1,0 +1,57 @@
+# .github/workflows/garmin_data_fetch.yml
+
+name: Fetch Garmin Data
+
+on:
+  workflow_dispatch:
+    inputs:
+      date:
+        description: 'Target date (YYYY-MM-DD)'
+        required: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install garminconnect garth
+
+      - name: Create credentials.json
+        run: |
+          mkdir -p scripts
+          echo "{\"email\": \"${{ secrets.GARMIN_EMAIL }}\", \"password\": \"${{ secrets.GARMIN_PASSWORD }}\"}" > scripts/credentials.json
+
+      - name: Run data fetch script
+        run: |
+          if [[ -n "$INPUT_DATE" ]]; then
+            python3 garmin_fetch.py "$INPUT_DATE" > data.json
+          else
+            python3 garmin_fetch.py > data.json
+          fi
+        env:
+          INPUT_DATE: ${{ github.event.inputs.date }}
+          GARMINTOKENS: ${{ github.workspace }}/tokenstore
+
+      - name: Format data with Ruby
+        run: |
+          ruby format.rb data.json > output.txt
+
+      - name: Upload output
+        uses: actions/upload-artifact@v4
+        with:
+          name: garmin-data
+          path: output.txt
+
