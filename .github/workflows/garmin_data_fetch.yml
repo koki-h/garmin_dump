@@ -29,10 +29,10 @@ jobs:
         run: |
           pip install garminconnect garth
 
-      - name: Create action_credentials.json
+      - name: Create credentials.json
         run: |
           mkdir -p scripts
-          echo "{\"email\": \"${{ secrets.GARMIN_EMAIL }}\", \"password\": \"${{ secrets.GARMIN_PASSWORD }}\"}" > action_credentials.json
+          echo "{\"email\": \"${{ secrets.GARMIN_EMAIL }}\", \"password\": \"${{ secrets.GARMIN_PASSWORD }}\"}" > credentials.json
 
       - name: Run data fetch script
         run: |
