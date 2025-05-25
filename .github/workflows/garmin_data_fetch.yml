@@ -29,17 +29,17 @@ jobs:
         run: |
           pip install garminconnect garth
 
-      - name: Create credentials.json
+      - name: Create action_credentials.json
         run: |
           mkdir -p scripts
-          echo "{\"email\": \"${{ secrets.GARMIN_EMAIL }}\", \"password\": \"${{ secrets.GARMIN_PASSWORD }}\"}" > scripts/credentials.json
+          echo "{\"email\": \"${{ secrets.GARMIN_EMAIL }}\", \"password\": \"${{ secrets.GARMIN_PASSWORD }}\"}" > action_credentials.json
 
       - name: Run data fetch script
         run: |
           if [[ -n "$INPUT_DATE" ]]; then
-            python3 garmin_fetch.py "$INPUT_DATE" > data.json
+            python3 get_garmin_data.py "$INPUT_DATE" > data.json
           else
-            python3 garmin_fetch.py > data.json
+            python3 get_garmin_data.py > data.json
           fi
         env:
           INPUT_DATE: ${{ github.event.inputs.date }}
@@ -47,7 +47,7 @@ jobs:
 
       - name: Format data with Ruby
         run: |
-          ruby format.rb data.json > output.txt
+          ruby display_result.rb data.json > output.txt
 
       - name: Upload output
         uses: actions/upload-artifact@v4
