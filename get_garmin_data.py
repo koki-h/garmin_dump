@@ -12,7 +12,6 @@ CREDENTIAL_FILE = "credentials.json"
 TOKENSTORE = os.getenv("GARMINTOKENS", os.getcwd())
 
 def init_client():
-    # credentials.json から読み込み
     try:
         with open(CREDENTIAL_FILE, "r") as f:
             creds = json.load(f)
@@ -21,19 +20,14 @@ def init_client():
     except Exception:
         raise Exception("credentials.json の読み込みに失敗しました。")
 
-    client = Garmin()
-    # まずトークンでログインを試行
     try:
-        client.login(TOKENSTORE)
-#        print("トークンログインに成功しました。")
+        client = Garmin()
+        client.login(TOKENSTORE)  # トークンでのログインを試す
     except (FileNotFoundError, GarthHTTPError):
-        # トークンログイン失败時はパスワードログイン
-#        print("トークンログイン失敗 → パスワード認証を実施します。")
+        # パスワード認証に切り替え
         client = Garmin(email, password)
-        client.login()
-        # 新しいトークンを保存
+        client.login()  # ← ここは TOKENSTORE を渡さない！！
         client.garth.dump(TOKENSTORE)
-#        print(f"新しいトークンを '{TOKENSTORE}' に保存しました。")
     return client
 
 client = init_client()
