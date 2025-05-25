@@ -36,6 +36,7 @@ jobs:
 
       - name: Run data fetch script
         run: |
+          mkdir -p tokenstore
           if [[ -n "$INPUT_DATE" ]]; then
             python3 get_garmin_data.py "$INPUT_DATE" > data.json
           else
