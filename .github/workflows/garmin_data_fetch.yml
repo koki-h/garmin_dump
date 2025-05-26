@@ -45,6 +45,7 @@ jobs:
         env:
           INPUT_DATE: ${{ github.event.inputs.date }}
           GARMINTOKENS: ${{ github.workspace }}/tokenstore
+          TZ: ${{ vars.TZ }}
 
       - name: Format data with Ruby
         run: |
