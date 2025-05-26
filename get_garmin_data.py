@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import datetime
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+
 import json
 import os
 import time
@@ -34,6 +36,21 @@ def init_client():
 client = init_client()
 
 # --- 日付設定 ---
+def get_today_by_env_timezone():
+    # Garmin Connectアカウント設定に合わせたタイムゾーンを環境変数 TZ から取得
+    tz_name = os.environ.get("TZ")
+    if tz_name:
+        try:
+            tz = ZoneInfo(tz_name)
+        except ZoneInfoNotFoundError:
+            print(f"無効なタイムゾーン名: {tz_name}。ローカルタイムゾーンにフォールバックします。")
+            tz = None
+    else:
+        tz = None
+
+    now = datetime.datetime.now(tz)
+    return now.date()
+
 # 引数で日付を指定する場合
 if len(os.sys.argv) > 1:
     try:
@@ -44,7 +61,7 @@ if len(os.sys.argv) > 1:
         exit(1)
 # 引数がない場合は今日の日付を使用
 else:
-    today = datetime.date.today()
+    today = get_today_by_env_timezone()
 
 yesterday = today - datetime.timedelta(days=1)
 
