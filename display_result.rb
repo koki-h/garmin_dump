@@ -50,10 +50,13 @@ def recalc_min_max(entries)
   time = Time.new(yesterday.year, yesterday.month, yesterday.day, 15, 0, 0, '+09:00')
   # 15時の時刻を基準にデータを取得
   y15_e = closest_point(entries, time)
+  # 19時の時刻を基準にデータを取得
+  y19_e = closest_point(entries, time + 4 * 60 * 60) # 15時 + 4時間
   {
     min: { time: min_e[:time], value: min_e[:value] },
     max: { time: max_e[:time], value: max_e[:value] },
-    y15: { time: y15_e[:time], value: y15_e[:value] }
+    y15: { time: y15_e[:time], value: y15_e[:value] },
+    y19: { time: y19_e[:time], value: y19_e[:value] }
   }
 end
 
@@ -89,6 +92,7 @@ puts "- 起床時: 値=#{wake_bb[:value]}  時刻=#{wake_bb[:time].strftime('%H:
 puts "- 前日最大: 値=#{bb_stats[:max][:value]}  時刻=#{bb_stats[:max][:time].strftime('%H:%M')}"
 puts "- 前日最小: 値=#{bb_stats[:min][:value]}  時刻=#{bb_stats[:min][:time].strftime('%H:%M')}"
 puts "- 前日15時: 値=#{bb_stats[:y15][:value]}  時刻=#{bb_stats[:y15][:time].strftime('%H:%M')}"
+puts "- 前日19時: 値=#{bb_stats[:y19][:value]}  時刻=#{bb_stats[:y19][:time].strftime('%H:%M')}"
 puts
 
 # ストレス
@@ -103,6 +107,7 @@ puts "- 起床時: 値=#{wake_st[:value]}  時刻=#{wake_st[:time].strftime('%H:
 puts "- 前日最大: 値=#{st_stats[:max][:value]}  時刻=#{st_stats[:max][:time].strftime('%H:%M')}"
 puts "- 前日最小: 値=#{st_stats[:min][:value]}  時刻=#{st_stats[:min][:time].strftime('%H:%M')}"
 puts "- 前日15時: 値=#{st_stats[:y15][:value]}  時刻=#{st_stats[:y15][:time].strftime('%H:%M')}"
+puts "- 前日19時: 値=#{st_stats[:y19][:value]}  時刻=#{st_stats[:y19][:time].strftime('%H:%M')}"
 puts
 
 # 心拍数
@@ -117,6 +122,7 @@ puts "- 起床時: 値=#{wake_hr[:value]}  時刻=#{wake_hr[:time].strftime('%H:
 puts "- 前日最大: 値=#{hr_stats[:max][:value]}  時刻=#{hr_stats[:max][:time].strftime('%H:%M')}"
 puts "- 前日最小: 値=#{hr_stats[:min][:value]}  時刻=#{hr_stats[:min][:time].strftime('%H:%M')}"
 puts "- 前日15時: 値=#{hr_stats[:y15][:value]}  時刻=#{hr_stats[:y15][:time].strftime('%H:%M')}"
+puts "- 前日19時: 値=#{hr_stats[:y19][:value]}  時刻=#{hr_stats[:y19][:time].strftime('%H:%M')}"
 puts
 
 # HRV は sleep_summary の値をそのまま表示
