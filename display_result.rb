@@ -72,7 +72,7 @@ score = dto.dig('sleepScores','overall','value')
 sleep_bb = parse_entries(data.dig('sleep_raw', 'sleepBodyBattery'), 'startGMT', 'value') || [] 
 sleep_st = parse_entries(data.dig('sleep_raw', 'sleepStress'), 'startGMT', 'value') || []
 sleep_hr = parse_entries(data.dig('sleep_raw', 'sleepHeartRate'), 'startGMT', 'value') || []
-
+sleep_hrv = data['sleep_raw']['avgOvernightHrv'] || nil
 puts "【#{data['date']} の Garmin 睡眠データ】"
 puts "■ 睡眠概要"
 puts "- スコア: #{score || 'N/A'}"
@@ -130,7 +130,7 @@ hrv = data['hrv_raw'] || []
 if hrv.any?
   hrv_vals = hrv.map { |e| e['hrvValue'] }
   puts "■ HRV (睡眠中)"
-  puts "- 平均: #{(hrv_vals.sum.to_f / hrv_vals.size).round(1)}"
+  puts "- 平均: #{sleep_hrv || (hrv_vals.sum.to_f / hrv_vals.size).round(1)}"
   puts "- 最大: #{hrv_vals.max}"
   puts "- 最小: #{hrv_vals.min}"
   puts
