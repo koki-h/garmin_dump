@@ -157,3 +157,12 @@ if bp_t
 else
   puts "- 起床時: データなし"
 end
+puts
+bp_y = data['bp_y_raw'] || []
+bp_y = bp_y[0]['measurements'].sort_by{|e| e['measurementTimestampGMT']}.slice(1..-2)
+puts "■ 前日日中血圧" unless bp_y.empty?
+bp_y.each do |e|
+  next unless e['systolic'] && e['diastolic']
+  time = to_jst(e['measurementTimestampGMT'])
+  puts "- #{time.strftime('%H:%M')}: #{e['systolic']}/#{e['diastolic']} #{e['pulse']}bpm"
+end
